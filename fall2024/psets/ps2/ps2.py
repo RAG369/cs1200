@@ -99,7 +99,7 @@ class BinarySearchTree:
             if self.right is None:
                 self.right = BinarySearchTree(self.debugger)
             self.right.insert(key)
-        self.calculate_sizes()
+        self.size = 1 + ( self.left.size if self.left else 0) + (self.right.size if self.right else 0)
         return self
 
     
@@ -127,7 +127,32 @@ class BinarySearchTree:
        11 
     '''
     def rotate(self, direction, child_side):
-        # Your code goes here
+        child = self.left if child_side == "L" else self.right
+        if not child:
+            return self  # We can't rotate any child
+
+        if direction == "L":
+            new_root = child.right
+            if new_root:
+                child.right = new_root.left
+                new_root.left = child
+        elif direction == "R":
+            new_root = child.left
+            if new_root:
+                child.left = new_root.right
+                new_root.right = child
+
+        if new_root:
+            # Update sizes after rotation
+            child.size = 1 + (child.left.size if child.left else 0) + (child.right.size if child.right else 0)
+            new_root.size = 1 + (new_root.left.size if new_root.left else 0) + (new_root.right.size if new_root.right else 0)
+
+        # Attach the new root back to the current tree
+        if child_side == "L":
+            self.left = new_root
+        else:
+            self.right = new_root
+
         return self
 
     def print_bst(self):
